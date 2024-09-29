@@ -9,6 +9,9 @@ export const MainNav = () => {
                 <a href="#about" className="text-white hover:text-white mr-4">
                     About Me
                 </a>
+                <a href="#experience" className="text-white hover:text-white mr-4">
+                    Experience
+                </a>
                 <a href="#projects" className="text-white hover:text-white mr-4">
                     Projects
                 </a>

@@ -1,6 +1,7 @@
 import { Navbar } from './components/Navbar'
 import {About} from './components/About'
 import './App.css'
+import { Experience } from './components/Experience';
 
 function App() {
 
@@ -9,6 +10,7 @@ function App() {
       <Navbar />
       <main className="flex-grow w-full">
         <About />
+        <Experience />
       </main>
     </div>
   );
