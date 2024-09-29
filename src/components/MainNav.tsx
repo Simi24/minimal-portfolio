@@ -16,7 +16,7 @@ export const MainNav = () => {
                     Projects
                 </a>
                 <a href="#contact" className="text-white hover:text-white">
-                    Contact
+                    Hire Me 🚀
                 </a>
             </div>
         </nav>

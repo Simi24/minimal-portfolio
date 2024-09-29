@@ -4,6 +4,8 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from './ui/button';
 import { FaBars } from 'react-icons/fa';
 
+//TODO: refine this component
+
 export default function MobileNav() {
   const [open, setOpen] = useState(false);
 
