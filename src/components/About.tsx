@@ -4,7 +4,7 @@ import { FaLinkedin } from "react-icons/fa";
 export const About = () => {
     return (
     <section id="about">
-        <div className="container mx-auto flex px-10 py-20 md:flex-row flex-col items-center">
+        <div className="container mx-auto flex px-10 py-20 md:flex-row flex-col items-center bg-sky-950">
         <div className="lg:flex-grow flex-auto md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center text-white">
             <h2 className="text-white">Hi 😃, my name is</h2>
             <h1 className="text-white title-font sm:text-6xl text-4xl mb-4 font-medium font-bold">Simone,</h1>
