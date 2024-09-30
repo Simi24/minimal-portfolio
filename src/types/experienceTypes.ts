@@ -5,5 +5,4 @@ export interface ExperienceItemProps {
     duration: string;
     company: string;
     description: string;
-  }
-  
+}
