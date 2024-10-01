@@ -1,5 +1,4 @@
 import { FaLinkedin } from "react-icons/fa";
-import image from "src/assets/fotoCV.jpg"
 
 export const About = () => {
     return (
@@ -24,7 +23,7 @@ export const About = () => {
             <img
             className="object-cover object-center rounded shadow-lg"
             alt="hero"
-            src={image}
+            src="public/fotoCV.jpg"
             />
         </div>
         </div>
