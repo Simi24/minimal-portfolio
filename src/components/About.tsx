@@ -23,7 +23,7 @@ export const About = () => {
             <img
             className="object-cover object-center rounded shadow-lg"
             alt="hero"
-            src="public/fotoCV.jpg"
+            src="images/fotoCV.jpg"
             />
         </div>
         </div>
