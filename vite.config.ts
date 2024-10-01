@@ -10,5 +10,5 @@ plugins: [react()],
   },
   
 },
-base: "/minimal-portfolio/",
+base: "",
 })
