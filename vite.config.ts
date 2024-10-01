@@ -8,5 +8,7 @@ plugins: [react()],
   alias: {
     "@": path.resolve(__dirname, "./src"),
   },
+  
 },
+base: "/minimal-portfolio/",
 })

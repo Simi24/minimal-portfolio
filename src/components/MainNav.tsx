@@ -1,4 +1,4 @@
-
+//TODO: replace linkedin link with form section
 export const MainNav = () => {
     return (
         <nav className="fixed inset-x-0 top-0 flex justify-between items-center bg-sky-950 p-6 w-full z-50 hidden gap-2 md:flex">
@@ -15,7 +15,7 @@ export const MainNav = () => {
                 <a href="#projects" className="text-white hover:text-white mr-4">
                     Projects
                 </a>
-                <a href="#contact" className="text-white hover:text-white">
+                <a href="https://www.linkedin.com/in/simone-paolo-petta/" className="text-white hover:text-white animate-bounce">
                     Hire Me 🚀
                 </a>
             </div>
