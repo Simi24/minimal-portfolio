@@ -8,7 +8,7 @@ export const About = () => {
             <h2 className="text-white ">Hi 😃, my name is</h2>
             <h1 className="text-white title-font sm:text-6xl text-4xl mb-4 font-medium font-bold"><strong>Simone,</strong></h1>
             <p className="text-white">
-                I'm a <strong>Software Engineer</strong> based in Opera, Milano, Italy, Eart, Solar System ☀️. <br />
+                I'm a <strong>Software Engineer</strong> based in Opera, Milano, Italy, Earth, Solar System ☀️. <br />
                 I have a passion for software development and new <strong>technologies</strong>. <br />
                 I love to <strong>learn</strong> new things and share my knowledge with others. <br />
                 I've completed my <strong>bachelor degree in computer science</strong> for digital communication at University of Milano 🎓. <br />
@@ -23,7 +23,7 @@ export const About = () => {
             <img
             className="object-cover object-center rounded shadow-lg"
             alt="hero"
-            src="images/fotoCV.jpg"
+            src="/images/fotoCV.jpg"
             />
         </div>
         </div>
