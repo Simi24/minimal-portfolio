@@ -21,9 +21,9 @@ export const About = () => {
         </div>
         <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 flex-auto ">
             <img
-            className="object-cover object-center rounded shadow-lg"
+            className="object-cover object-center rounded"
             alt="hero"
-            src="/images/fotoCV.jpg"
+            src="/images/fotoCV.png"
             />
         </div>
         </div>
