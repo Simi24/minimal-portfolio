@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Grid, List, ChevronRight, Download, Eye, Star, Share2, FolderOpen } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Search, Grid, List} from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

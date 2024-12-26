@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DocumentConfig } from '@/types/documentConfig';
 import { documentTypesConfig } from '@/types/documentTypes';
+import { Link } from 'react-router-dom';
 
 const DocumentCard = ({ doc }: { doc: DocumentConfig }) => (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -33,7 +34,7 @@ const DocumentCard = ({ doc }: { doc: DocumentConfig }) => (
           </Button>
           <Button size="sm" variant="outline">
             <Eye size={16} className="mr-2" />
-            Download
+            <Link to={doc.path} target='_blank' download={true}>Download</Link>
           </Button>
           {/* <Button size="sm" variant="outline">
             <Star size={16} />
