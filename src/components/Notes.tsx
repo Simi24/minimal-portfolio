@@ -1,188 +1,135 @@
-import { useState } from 'react';
-import { ChevronDown, ChevronRight, Grid, List } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
+import React, { useState, useMemo } from 'react';
+import { Search, Grid, List, ChevronRight, Download, Eye, Star, Share2, FolderOpen } from 'lucide-react';
 
-// Interfacce TypeScript
-interface CourseFiles {
-  [course: string]: string[];
-}
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import DocumentCard from './DocumentCard';
+import { documentTypesConfig } from '@/types/documentTypes';
+import { DocumentConfig } from '@/types/documentConfig';
+import {documentsData} from '@/data/notes';
 
-interface YearCourses {
-  [year: string]: CourseFiles;
-}
 
-interface DegreeYears {
-  [degree: string]: YearCourses;
-}
+export default function Notes() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [selectedDegree, setSelectedDegree] = useState<'triennale' | 'magistrale'>('triennale');
 
-// Dati tipizzati
-const NotesData: DegreeYears = {
-  triennale: {
-    'Anno 1': {
-      'Analisi 1': ['analisi1_parte1.pdf', 'analisi1_parte2.pdf'],
-      'Fisica 1': ['fisica1_teoria.pdf', 'fisica1_esercizi.pdf'],
-    },
-    'Anno 2': {
-      'Analisi 2': ['analisi2.pdf'],
-      'Fisica 2': ['fisica2.pdf'],
-    },
-    'Anno 3': {
-      'Elettronica': ['elettronica_appunti.pdf'],
-    },
-  },
-  magistrale: {
-    'Anno 1': {
-      'Controlli Automatici': ['controlli_teoria.pdf'],
-      'Machine Learning': ['ml_notes.pdf'],
-    },
-    'Anno 2': {
-      'Robotica': ['robotica_appunti.pdf'],
-    },
-  },
-};
+  const filteredDocuments = useMemo(() => {
+    return documentsData.filter(doc => {
+      const matchesSearch = (
+        doc.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doc.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      const matchesType = !selectedType || doc.type === selectedType;
+      const matchesDegree = doc.degree === selectedDegree;
+      return matchesSearch && matchesType && matchesDegree;
+    });
+  }, [searchTerm, selectedType, selectedDegree]);
 
-// Tipi per lo stato dei tab
-type TabState = {
-  degree?: string | null;
-  year?: string | null;
-  course?: string | null;
-};
-
-const Notes: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
-  const [expandedTabs, setExpandedTabs] = useState<TabState>({});
-
-  const toggleTab = (type: keyof TabState, name: string): void => {
-    setExpandedTabs((prev) => ({
-      ...prev,
-      [type]: prev[type] === name ? null : name,
-    }));
-  };
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setSearchTerm(event.target.value.toLowerCase());
-  };
-
-  const filteredNotes: DegreeYears = Object.entries(NotesData).reduce<DegreeYears>((acc, [degree, years]) => {
-    const filteredYears: YearCourses = Object.entries(years).reduce<YearCourses>((yearAcc, [year, courses]) => {
-      const filteredCourses: CourseFiles = Object.entries(courses).reduce<CourseFiles>((courseAcc, [course, files]) => {
-        if (course.toLowerCase().includes(searchTerm) || files.some((file) => file.toLowerCase().includes(searchTerm))) {
-          courseAcc[course] = files;
-        }
-        return courseAcc;
-      }, {});
-
-      if (Object.keys(filteredCourses).length > 0) {
-        yearAcc[year] = filteredCourses;
+  // First group by year, then by course
+  const groupedByYear = useMemo(() => {
+    const yearGroups = new Map<string, Map<string, DocumentConfig[]>>();
+    
+    filteredDocuments.forEach(doc => {
+      // Initialize year group if it doesn't exist
+      if (!yearGroups.has(doc.year)) {
+        yearGroups.set(doc.year, new Map());
       }
-      return yearAcc;
-    }, {});
+      
+      const courseGroup = yearGroups.get(doc.year)!;
+      if (!courseGroup.has(doc.course)) {
+        courseGroup.set(doc.course, []);
+      }
+      
+      courseGroup.get(doc.course)!.push(doc as DocumentConfig);
+    });
 
-    if (Object.keys(filteredYears).length > 0) {
-      acc[degree] = filteredYears;
-    }
-    return acc;
-  }, {});
+    // Convert to sorted array of year entries
+    return Array.from(yearGroups.entries())
+      .sort((a, b) => a[0].localeCompare(b[0])); // Sort by year
+  }, [filteredDocuments]);
+
+  
 
   return (
-    <section className="py-16 px-4 md:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <input
-            type="text"
-            placeholder="Cerca appunti..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="w-full md:w-2/3 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
-          />
-          <div className="flex items-center gap-4 ml-4">
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 ${viewMode === 'list' ? 'bg-sky-500 text-white' : 'bg-gray-200 text-gray-600'} rounded-lg`}
-            >
-              <List size={20} />
-            </button>
-            <button
+    <div className="p-6 max-w-7xl mx-auto">
+      <Tabs defaultValue="triennale" onValueChange={(value) => setSelectedDegree(value as 'triennale' | 'magistrale')}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <TabsList>
+            <TabsTrigger value="triennale">Triennale</TabsTrigger>
+            <TabsTrigger value="magistrale">Magistrale</TabsTrigger>
+          </TabsList>
+
+          <div className="flex items-center gap-4">
+            <div className="relative flex-grow">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+              <Input
+                placeholder="Cerca per corso o titolo..."
+                className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Button
+              variant={viewMode === 'grid' ? 'default' : 'outline'}
+              size="icon"
               onClick={() => setViewMode('grid')}
-              className={`p-2 ${viewMode === 'grid' ? 'bg-sky-500 text-white' : 'bg-gray-200 text-gray-600'} rounded-lg`}
             >
               <Grid size={20} />
-            </button>
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'outline'}
+              size="icon"
+              onClick={() => setViewMode('list')}
+            >
+              <List size={20} />
+            </Button>
           </div>
         </div>
 
-        <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-4'}>
-          {Object.entries(filteredNotes).map(([degree, years]) => (
-            <div key={degree} className="bg-sky-900 rounded-lg overflow-hidden">
-              <button
-                onClick={() => toggleTab('degree', degree)}
-                className="w-full px-4 py-3 flex items-center justify-between text-white hover:bg-sky-800 transition-colors"
-              >
-                <span className="font-semibold capitalize">{degree}</span>
-                {expandedTabs.degree === degree ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
-              </button>
-              {expandedTabs.degree === degree && (
-                <div className="px-4 pb-4">
-                  {Object.entries(years).map(([year, courses]) => (
-                    <div key={year} className="ml-4 mt-2">
-                      <button
-                        onClick={() => toggleTab('year', year)}
-                        className="w-full px-4 py-2 flex items-center justify-between text-white hover:bg-sky-800 rounded-md transition-colors"
-                      >
-                        <span>{year}</span>
-                        {expandedTabs.year === year ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                      </button>
-                      {expandedTabs.year === year && (
-                        <div className="ml-4">
-                          {Object.entries(courses).map(([course, files]) => (
-                            <div key={course} className="mt-2">
-                              <button
-                                onClick={() => toggleTab('course', course)}
-                                className="w-full px-4 py-2 flex items-center justify-between text-white hover:bg-sky-800 rounded-md transition-colors"
-                              >
-                                <span>{course}</span>
-                                {expandedTabs.course === course ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                              </button>
-                              {expandedTabs.course === course && (
-                                <div className="ml-8 mt-2 grid grid-cols-1 gap-4">
-                                  {files.map((file) => (
-                                    <Card key={file} className="bg-sky-800 text-white">
-                                      <CardHeader>
-                                        <CardTitle>{file}</CardTitle>
-                                        <CardDescription>Anteprima documento</CardDescription>
-                                      </CardHeader>
-                                      <CardContent>
-                                        <div className="flex items-center justify-between">
-                                          <a
-                                            href={`/notes/${degree}/${year}/${course}/${file}`}
-                                            className="text-sky-300 hover:text-white"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            Visualizza
-                                          </a>
-                                          <button className="text-sky-300 hover:text-white">Scarica</button>
-                                        </div>
-                                      </CardContent>
-                                    </Card>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+        <div className="flex flex-wrap gap-2 mb-8">
+          {(Object.keys(documentTypesConfig) as Array<keyof typeof documentTypesConfig>).map(type => (
+            <Badge
+              key={type}
+              variant="secondary"
+              className={`cursor-pointer ${selectedType === type ? 'bg-primary' : ''}`}
+              onClick={() => setSelectedType(selectedType === type ? null : type)}
+            >
+              {documentTypesConfig[type].label}
+            </Badge>
           ))}
         </div>
-      </div>
-    </section>
-  );
-};
 
-export default Notes;
+        <TabsContent value={selectedDegree}>
+          <div className="space-y-12">
+            {groupedByYear.map(([year, courses]) => (
+              <div key={year} className="space-y-8">
+                <h2 className="text-2xl font-bold text-white">{year}</h2>
+                {Array.from(courses.entries()).map(([course, docs]) => (
+                  <div key={`${year}-${course}`} className="space-y-4">
+                    <h3 className="text-xl font-semibold text-white ml-4">{course}</h3>
+                    <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+                      {docs.map((doc) => (
+                        <DocumentCard key={doc.id} doc={doc} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {filteredDocuments.length === 0 && (
+        <div className="text-center py-12 text-gray-400">
+          Nessun documento trovato per la ricerca corrente
+        </div>
+      )}
+    </div>
+  );
+}
